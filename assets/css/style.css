@@ -132,3 +132,203 @@ body.admin-mode .sidebar .profile small { color: #8f9ab0; }
 
 /* Admin metric clarification */
 .admin-dashboard-metrics .admin-metric-note{display:block;margin-top:3px;font-size:9px;color:#8f99ad;font-weight:600}
+
+/* Enhanced cash-flow report */
+.cash-flow-panel{height:390px;display:flex;flex-direction:column}
+.cash-flow-panel .panel-head{margin-bottom:12px}
+.cash-flow-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}
+.cash-flow-summary>div{padding:9px 10px;border:1px solid #edf0f5;border-radius:9px;background:#f8f9fc;min-width:0}
+.cash-flow-summary span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.55px;color:#8d96a7;font-weight:800;margin-bottom:3px}
+.cash-flow-summary b{display:block;font-size:12px;color:#253047;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cash-flow-summary b.positive{color:#159b68}.cash-flow-summary b.negative{color:#e35358}
+.cash-flow-chart-wrap{position:relative;flex:1;min-height:0}
+.cash-flow-chart-wrap canvas{height:225px!important;max-height:none!important}
+.cash-flow-panel .chart-empty{height:225px}
+.dark .cash-flow-summary>div{background:#202636;border-color:#303747}
+.dark .cash-flow-summary b{color:#e8edf5}.dark .cash-flow-summary span{color:#8e99ad}
+@media(max-width:700px){.cash-flow-panel{height:430px}.cash-flow-summary{grid-template-columns:repeat(2,1fr)}.cash-flow-chart-wrap canvas,.cash-flow-panel .chart-empty{height:240px!important}}
+
+/* Cash flow summary refinement */
+.cash-flow-period-label{font-size:11px;color:#8d96a7;margin:8px 0 8px;font-weight:600}
+.cash-flow-summary{gap:10px;margin-bottom:14px}
+.cash-flow-summary>div{padding:11px 12px;min-height:66px;display:flex;flex-direction:column;justify-content:center}
+.cash-flow-summary b{font-size:14px;margin-bottom:2px}
+.cash-flow-summary small{font-size:9px;color:#9aa3b3;line-height:1.2}
+.dark .cash-flow-period-label,.dark .cash-flow-summary small{color:#8e99ad}
+@media(max-width:700px){.cash-flow-period-label{margin-top:6px}.cash-flow-summary>div{min-height:64px}}
+
+/* =========================================================
+   FinTrack UI Polish — v2026.08.25
+   Dashboard-first visual refinement
+   ========================================================= */
+:root{
+  --ft-primary:#635bff;
+  --ft-primary-soft:#eeedff;
+  --ft-bg:#f5f7fb;
+  --ft-panel:#ffffff;
+  --ft-border:#e5e9f1;
+  --ft-text:#172033;
+  --ft-muted:#7f899b;
+  --ft-subtle:#9aa3b3;
+  --ft-success:#159b68;
+  --ft-danger:#e35358;
+  --ft-warning:#d99624;
+  --ft-shadow:0 10px 28px rgba(23,32,51,.045);
+}
+
+body{background:linear-gradient(180deg,#f7f8fc 0%,#f3f6fb 100%);color:var(--ft-text)}
+.sidebar{box-shadow:8px 0 28px rgba(24,31,50,.035);border-right-color:#e4e8f0;padding-top:22px}
+.brand{padding-bottom:24px}
+.brand-mark{width:42px;height:42px;border-radius:13px;box-shadow:0 9px 22px rgba(99,91,255,.22)}
+.nav-link{transition:background .18s ease,color .18s ease,transform .18s ease}
+.nav-link:hover{transform:translateX(2px)}
+.nav-link.active{box-shadow:inset 3px 0 0 var(--ft-primary)}
+.main{min-width:0}
+.topbar{position:sticky;top:0;z-index:15;height:78px;padding:0 32px;box-shadow:0 1px 0 rgba(229,233,241,.8)}
+.topbar h1{font-size:23px;letter-spacing:-.35px}
+.top-actions{align-items:center}
+.account-chip{display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid #e6e9f0;border-radius:11px;background:#fbfcfe;color:#5e687a;font-size:11px;font-weight:700}
+.account-dot{width:7px;height:7px;border-radius:50%;background:#18a86b;box-shadow:0 0 0 4px #e8f8f1}
+.icon-btn{width:38px;height:38px;padding:0;border:1px solid #e7eaf1;background:#f8f9fc;display:grid;place-items:center;transition:all .18s ease}
+.icon-btn:hover{background:#eeedff;color:var(--ft-primary);transform:translateY(-1px)}
+.primary{min-height:40px;border-radius:11px;padding:10px 16px;transition:transform .18s ease,box-shadow .18s ease}
+.primary:hover{transform:translateY(-1px);box-shadow:0 9px 20px rgba(99,91,255,.22)}
+.content{padding:26px 32px 42px}
+.welcome{padding:21px 23px;border:1px solid var(--ft-border);border-radius:17px;background:linear-gradient(135deg,#fff 0%,#fbfaff 100%);box-shadow:var(--ft-shadow);margin-bottom:18px}
+.welcome h2{font-size:24px;letter-spacing:-.5px}
+.welcome p{font-size:12px}
+.welcome .outline{background:#fff;border-color:#dfe4ed}
+.cards{gap:14px;margin-bottom:18px}
+.stat-card{min-height:132px;border-radius:16px;padding:19px 19px 17px;box-shadow:var(--ft-shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(23,32,51,.07);border-color:#dce2ec}
+.stat-card strong{font-size:25px;letter-spacing:-.7px}
+.stat-card i{width:34px;height:34px;border-radius:10px}
+.stat-card small{font-size:10px}
+.grid-two{gap:16px;margin-bottom:16px}
+.panel{border-radius:16px;border-color:var(--ft-border);box-shadow:var(--ft-shadow);padding:20px}
+.panel-head{margin-bottom:16px}
+.panel-head h3{font-size:14px;letter-spacing:-.1px}
+.panel-head span{font-size:10px}
+.panel select{min-width:125px;height:38px;border-radius:10px;padding:8px 11px;background:#fbfcfe;font-weight:600}
+
+/* Cash-flow: keep the chart, summary and legend inside one coherent card. */
+.cash-flow-panel{height:430px;min-height:430px;overflow:hidden;padding:20px 20px 15px}
+.cash-flow-panel .panel-head{margin-bottom:8px}
+.cash-flow-panel .panel-head>div:first-child{min-width:0}
+.cash-flow-panel .panel-head h3{font-size:15px}
+.cash-flow-panel .panel-head span{display:block;margin-top:3px}
+.cash-flow-period-label{display:inline-flex;align-items:center;width:max-content;max-width:100%;padding:5px 8px;margin:5px 0 9px;border-radius:7px;background:#f4f5fb;color:#697386;font-size:9px;font-weight:700}
+.cash-flow-summary{gap:9px;margin-bottom:10px}
+.cash-flow-summary>div{position:relative;min-height:68px;padding:10px 11px;border-radius:11px;background:#f8f9fc;border-color:#e9edf3;overflow:hidden}
+.cash-flow-summary>div:after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#dfe3ec}
+.cash-flow-summary>div:nth-child(1):after{background:#39a7e8}
+.cash-flow-summary>div:nth-child(2):after{background:#ff6687}
+.cash-flow-summary>div:nth-child(3):after{background:#18a86b}
+.cash-flow-summary>div:nth-child(4):after{background:#635bff}
+.cash-flow-summary span{font-size:8px;letter-spacing:.65px}
+.cash-flow-summary b{font-size:14px;line-height:1.25}
+.cash-flow-summary small{font-size:8px}
+.cash-flow-chart-wrap{min-height:0;flex:1;padding-top:2px}
+.cash-flow-chart-wrap canvas{height:245px!important;max-height:245px!important}
+.cash-flow-panel .chart-empty{height:245px}
+
+/* Improve Chart.js legend readability without changing the data. */
+.cash-flow-panel .chartjs-render-monitor{outline:none}
+
+/* Spending panel */
+.grid-two>.panel.chart-panel:not(.cash-flow-panel){height:430px}
+.donut-wrap{height:245px;margin-top:4px}
+.donut-wrap canvas{max-width:235px;max-height:225px}
+.legend{gap:8px 14px;padding:3px 8px 0}
+.legend span{display:inline-flex;align-items:center;font-size:9px;padding:4px 7px;border-radius:7px;background:#f7f8fb}
+.legend span:before{width:7px;height:7px;margin-right:5px}
+
+/* Recent activity */
+.bottom-grid{align-items:stretch}
+.bottom-grid>.panel{min-height:280px}
+.table-wrap{margin-top:-2px}
+table{min-width:520px}
+th{font-size:8px;padding:9px 8px}
+td{padding:12px 8px;font-size:10px}
+tbody tr{transition:background .15s ease}
+tbody tr:hover{background:#fafbfe}
+.tag{border:1px solid #e8ebf1;background:#f7f8fb}
+.text-btn{padding:6px 7px;border-radius:7px}
+.text-btn:hover{background:#eeedff}
+
+/* Savings goals */
+.goal-panel{overflow:hidden}
+.goal{padding:11px 0;border-bottom:1px solid #eef1f5}
+.goal:first-child{padding-top:3px}
+.goal:last-child{border-bottom:0;padding-bottom:0}
+.goal-row{font-size:10px}
+.goal-meta{font-size:8px}
+.progress{height:8px;background:#edf0f5}
+.progress i{background:linear-gradient(90deg,#635bff,#7a70ff)}
+
+/* Better empty states */
+.chart-empty{border:1px dashed #dfe4ed;border-radius:12px;background:#fafbfe;margin-top:4px;padding:20px}
+.chart-empty-icon{width:40px!important;height:40px!important;border-radius:12px!important;background:#eeedff!important;color:#635bff!important}
+
+/* Section pages get the same visual language. */
+.section-head{padding:2px 1px 0}
+.section-head h2{font-size:23px;letter-spacing:-.4px}
+.goal-card,.analytics-card,.settings,.protection-grid>.panel{box-shadow:var(--ft-shadow)}
+.goal-card,.analytics-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.goal-card:hover,.analytics-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(23,32,51,.065)}
+
+/* Tables and forms */
+.modal-box{border-radius:17px;box-shadow:0 24px 70px rgba(17,24,39,.18)}
+.settings input,.settings select,.modal-box input,.modal-box select,.modal-box textarea{transition:border-color .15s ease,box-shadow .15s ease}
+.settings input:focus,.settings select:focus,.modal-box input:focus,.modal-box select:focus,.modal-box textarea:focus{border-color:#8c86ff;box-shadow:0 0 0 3px rgba(99,91,255,.10);outline:none}
+
+/* Dark theme refinement */
+.dark body{background:linear-gradient(180deg,#111623 0%,#0f1420 100%)}
+.dark .sidebar,.dark .topbar{background:#151b29;border-color:#283144}
+.dark .account-chip,.dark .icon-btn{background:#1a2130;border-color:#2d3546;color:#aeb8ca}
+.dark .welcome,.dark .panel,.dark .stat-card,.dark .goal-card,.dark .analytics-card{background:#171d2b;border-color:#2a3345;box-shadow:none}
+.dark .welcome{background:linear-gradient(135deg,#171d2b 0%,#1a1e31 100%)}
+.dark .welcome .outline,.dark .panel select{background:#1b2231;border-color:#30394c;color:#aeb8ca}
+.dark .stat-card:hover,.dark .goal-card:hover,.dark .analytics-card:hover{border-color:#3b4660;box-shadow:none}
+.dark tbody tr:hover{background:#1b2130}
+.dark .tag,.dark .legend span,.dark .cash-flow-period-label,.dark .chart-empty{background:#1c2332;border-color:#30394a;color:#aab4c6}
+.dark .cash-flow-summary>div{background:#1b2231;border-color:#30394a}
+.dark .cash-flow-summary b{color:#edf1f7}
+
+/* Accessibility / polish */
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid rgba(99,91,255,.22);outline-offset:2px}
+@media(max-width:1100px){
+  .content{padding:24px 22px 36px}
+  .topbar{padding:0 22px}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .grid-two{grid-template-columns:1fr}
+  .cash-flow-panel,.grid-two>.panel.chart-panel:not(.cash-flow-panel){height:410px;min-height:410px}
+}
+@media(max-width:760px){
+  .sidebar{width:220px}
+  .main{margin-left:220px;width:calc(100% - 220px)}
+  .topbar{padding:0 16px}
+  .top-actions .account-chip{display:none}
+  .content{padding:18px 15px 30px}
+  .welcome{padding:17px;margin-bottom:15px}
+  .welcome h2{font-size:20px}
+  .cards{grid-template-columns:1fr}
+  .cash-flow-summary{grid-template-columns:repeat(2,1fr)}
+  .cash-flow-panel,.grid-two>.panel.chart-panel:not(.cash-flow-panel){height:470px;min-height:470px}
+  .cash-flow-chart-wrap canvas,.cash-flow-panel .chart-empty{height:250px!important;max-height:250px!important}
+  .bottom-grid>.panel{min-height:auto}
+}
+@media(max-width:600px){
+  .sidebar{position:fixed;transform:translateX(-100%);transition:transform .2s ease;box-shadow:18px 0 35px rgba(20,25,40,.15)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;width:100%}
+  .menu{display:grid;place-items:center;border:0;background:#f5f6fa;color:#5d6678;width:36px;height:36px;border-radius:9px;margin-right:10px}
+  .topbar>div:first-of-type{margin-right:auto}
+  .topbar h1{font-size:19px}
+  .topbar{height:70px}
+  .top-actions{gap:6px}
+  .top-actions .primary{padding:9px 11px;font-size:10px}
+  .welcome{align-items:flex-start;gap:12px;flex-direction:column}
+  .cash-flow-summary{grid-template-columns:1fr 1fr}
+  .cash-flow-summary b{font-size:13px}
+}
