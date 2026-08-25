@@ -484,3 +484,71 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 }
 body.dark .mobile-sidebar-overlay{background:rgba(0,0,0,.62)}
 body.dark .menu{background:#1b2231;border-color:#30394c;color:#dce2ed}
+
+/* =========================================================
+   FinTrack Mobile Navigation Fix — v2026.08.25
+   Drawer contains its own logout action and remains usable
+   on small iOS/Android screens.
+   ========================================================= */
+.sidebar .brand{position:relative}
+.sidebar-close{
+  display:none;
+  border:1px solid var(--ft-border,#e5e9f1);
+  background:var(--ft-panel,#fff);
+  color:var(--ft-muted,#7f899b);
+  width:36px;height:36px;border-radius:10px;
+  font-size:24px;line-height:1;
+  align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.sidebar-logout{
+  width:100%;
+  min-height:44px;
+  margin-top:12px;
+  padding:11px 13px;
+  border:1px solid #f0d9dc;
+  border-radius:12px;
+  background:#fff7f8;
+  color:#c84e57;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font:inherit;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+.sidebar-logout:hover{background:#fff0f2;border-color:#eabec3}
+.sidebar-logout span:first-child{font-size:18px}
+body.dark .sidebar-close{background:#202636;border-color:#343b4b;color:#dce2ed}
+body.dark .sidebar-logout{background:#261d23;border-color:#523037;color:#ff9aa0}
+body.dark .sidebar-logout:hover{background:#302027}
+
+@media (max-width:700px){
+  .sidebar .brand{padding-right:44px}
+  .sidebar-close{display:flex;position:absolute;right:0;top:0}
+  .sidebar-bottom{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+  .sidebar-logout{
+    min-height:48px;
+    margin-top:14px;
+    padding:12px 14px;
+    font-size:14px;
+  }
+  /* The drawer is the mobile home for sign-out; don't hide logout. */
+  .top-actions .logout-btn{display:none!important}
+  .sidebar-logout:focus-visible,
+  .sidebar-close:focus-visible,
+  .menu:focus-visible,
+  .nav-link:focus-visible{
+    outline:3px solid rgba(99,91,255,.28);
+    outline-offset:2px;
+  }
+}
+@media (max-width:430px){
+  .sidebar{
+    width:min(88vw,320px)!important;
+    padding-left:14px;
+    padding-right:14px;
+  }
+  .sidebar-logout{margin-top:16px}
+}
