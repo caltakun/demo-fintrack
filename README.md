@@ -1,40 +1,170 @@
-# FinTrack — Professional UI Enhancement
+# FinTrack – Financial Tracker System
 
-This build is based on the latest Cash Flow Summary Calculation Fixed version.
+FinTrack is a browser-based **Personal Finance Management System** designed to help users record, organize, monitor, and review their personal finances in one dashboard.
 
-## UI improvements
-- Refined dashboard spacing, typography, cards, panels, navigation and buttons.
-- Improved hover/focus states and visual hierarchy.
-- Improved responsive behavior for tablet and mobile layouts.
-- Improved dark theme consistency.
-- Fixed the Cash Flow card so the chart and Chart.js legend stay inside the panel.
-- Added cleaner Cash Flow summary cards with clear metric accents.
-- Improved chart readability with tick limits and better tooltip/legend spacing.
-- Made Spending Breakdown follow the same selected cash-flow period instead of showing unrelated all-time spending.
-- Spending Breakdown subtitle now shows the selected period.
-- Improved empty states and recent-transaction/table presentation.
-- Preserved the existing authentication, Admin Overview, savings, investments, protection and reports functionality.
+## Overview
 
-## Cash Flow behavior
-The Cash Flow summary and chart use the same selected period and the same underlying financial records.
+FinTrack provides modules for:
 
-Supported ranges:
-- This week
-- Last 4 weeks
-- This month
-- Last 6 months
-- Last 12 months
+- Dashboard and financial summaries
+- Income tracking
+- Expense tracking
+- Savings goals
+- Investments
+- Accounts & wallets
+- Debt management
+- Recurring transactions
+- Financial protection
+- Reports & analytics
+- User settings and profile management
+- Backup and restore
+- CSV report export
+- User registration and login
+- Admin account management
+- Activity/audit logging
 
-The Spending Breakdown now uses the same selected period as the Cash Flow Report.
+The interface is responsive and includes a mobile sidebar/menu for smaller screens.
 
-## Run
-Open `index.html` in a modern browser. Chart.js is loaded from jsDelivr, so charts require internet access unless Chart.js is bundled locally.
+## Quick Start
 
+### Option 1 – Open directly
 
-## Mobile navigation fix
-- Added a dedicated **Log out** button inside the mobile sidebar.
-- The top-right logout icon is hidden on small screens to avoid crowding; logout is always available from the menu.
-- Added a close (×) button inside the mobile drawer.
-- Added safe-area spacing and larger touch targets for mobile logout/menu controls.
-- Logout now uses one shared handler, clears the active session, closes the drawer, and returns to the login form.
-- Preserved the existing desktop logout button and authentication behavior.
+1. Extract the project ZIP.
+2. Open `index.html` in a modern browser.
+3. Sign in using the demo administrator account or create a new account.
+
+### Demo Administrator
+
+- **Username:** `admin`
+- **Email:** `admin@fintrack.local`
+- **Password:** `admin1`
+
+For security, change the password after first use if this system is being used beyond demonstration purposes.
+
+### Option 2 – Run with a local web server
+
+For a more reliable development setup, serve the project folder through a local web server.
+
+Examples:
+
+```bash
+python -m http.server 8000
+```
+
+Then open:
+
+`http://localhost:8000`
+
+## Important Data Behavior
+
+FinTrack currently stores application data in the browser's **localStorage/sessionStorage**. It does not use a remote database or server-side API.
+
+This means:
+
+- Data is specific to the browser/device where it was entered.
+- Clearing browser site data can remove stored financial information.
+- Data is not automatically synchronized between devices.
+- Use **Settings → Backup & reset → Export Backup** regularly.
+- Import a previously exported JSON backup to restore an account's data.
+
+## Main Workflow
+
+A recommended workflow is:
+
+1. Sign in or create an account.
+2. Set your display name, currency, and monthly budget.
+3. Add your bank, wallet, cash, or other accounts.
+4. Record income.
+5. Record expenses.
+6. Create savings goals and add savings contributions.
+7. Add investments and update their current values.
+8. Record debts and payment information.
+9. Complete the Protection Checklist and add protection records.
+10. Review Dashboard and Reports & Analytics.
+11. Export CSV reports when needed.
+12. Export a JSON backup regularly.
+
+## Protection Checklist
+
+The Protection module includes:
+
+- Emergency Fund
+- Health Insurance
+- Life Insurance
+- Income Protection
+- Others
+
+Selecting a protection checklist item automatically recognizes that protection category. When an existing protection record matches a checklist category, its checkbox appears selected.
+
+For detailed instructions, see [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
+
+## Security Notes
+
+This project includes client-side authentication features such as:
+
+- Account registration
+- Password requirements
+- Login attempt limiting
+- Session timeout
+- Logout
+- Password change
+- Separate user data storage
+
+However, this is still a **client-side/browser application**. It should not be treated as production-grade secure financial software because credentials and application data are stored locally in the browser.
+
+For production deployment, migrate authentication and financial data to a secure backend with:
+
+- Server-side authentication
+- Password hashing
+- HTTPS
+- Secure sessions/tokens
+- Database access controls
+- Server-side authorization
+- Input validation
+- Audit logging
+- Encryption and secure backup procedures
+
+## Project Structure
+
+```text
+FinTrack-System/
+├── index.html
+├── README.md
+├── docs/
+│   └── USER_GUIDE.md
+└── assets/
+    ├── css/
+    │   └── style.css
+    └── js/
+        └── app.js
+```
+
+## Technology
+
+- HTML5
+- CSS3
+- JavaScript
+- Browser Local Storage / Session Storage
+- Responsive CSS
+- No external backend required for the current version
+
+## Recommended Next Improvements
+
+For a more professional production-ready version:
+
+1. Connect the system to a real database.
+2. Implement secure server-side authentication.
+3. Add role-based permissions.
+4. Add server-side validation.
+5. Add automatic scheduled backups.
+6. Add PDF financial reports.
+7. Add monthly/yearly financial trends.
+8. Add recurring transaction automation.
+9. Add notifications and reminders.
+10. Add stronger mobile navigation and accessibility testing.
+11. Add import validation and backup version migration.
+12. Add deployment configuration and environment variables.
+
+## Documentation
+
+See **[docs/USER_GUIDE.md](docs/USER_GUIDE.md)** for the complete step-by-step user guidelines.
