@@ -1,26 +1,31 @@
-# FinTrack — Admin Dashboard Repair
+# FinTrack — Professional UI Enhancement
 
-This build repairs the Admin Dashboard version of FinTrack.
+This build is based on the latest Cash Flow Summary Calculation Fixed version.
 
-## Fixed
-- Restored the Savings Goals dashboard container (`goalList`) that was accidentally corrupted during the Admin Dashboard-only edit.
-- Fixed the broken HTML structure that prevented the JavaScript from finishing initialization, which caused the login form not to respond.
-- Added the missing `getUserData()` helper required by the admin financial-record counter.
-- Kept the Admin Dashboard separate from the normal financial dashboard.
-- Admin Dashboard shows:
-  - Total users
-  - Total financial records
-  - Number of admin accounts
-  - Account Management
-  - Delete individual users
-  - Delete all regular users
-  - Activity Log
-- Normal users continue to receive the regular financial dashboard.
+## UI improvements
+- Refined dashboard spacing, typography, cards, panels, navigation and buttons.
+- Improved hover/focus states and visual hierarchy.
+- Improved responsive behavior for tablet and mobile layouts.
+- Improved dark theme consistency.
+- Fixed the Cash Flow card so the chart and Chart.js legend stay inside the panel.
+- Added cleaner Cash Flow summary cards with clear metric accents.
+- Improved chart readability with tick limits and better tooltip/legend spacing.
+- Made Spending Breakdown follow the same selected cash-flow period instead of showing unrelated all-time spending.
+- Spending Breakdown subtitle now shows the selected period.
+- Improved empty states and recent-transaction/table presentation.
+- Preserved the existing authentication, Admin Overview, savings, investments, protection and reports functionality.
 
-## Admin access
-Username: `admin`
-Password: `admin1`
-Email: `admin@fintrack.local`
+## Cash Flow behavior
+The Cash Flow summary and chart use the same selected period and the same underlying financial records.
 
-## Note
-This remains a local-browser application. Authentication and authorization are stored in browser storage and are intended for local/demo use, not production security.
+Supported ranges:
+- This week
+- Last 4 weeks
+- This month
+- Last 6 months
+- Last 12 months
+
+The Spending Breakdown now uses the same selected period as the Cash Flow Report.
+
+## Run
+Open `index.html` in a modern browser. Chart.js is loaded from jsDelivr, so charts require internet access unless Chart.js is bundled locally.
