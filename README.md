@@ -2,6 +2,8 @@
 
 FinTrack is a browser-based **Personal Finance Management System** designed to help users record, organize, monitor, and review their personal finances in one dashboard.
 
+> 📘 **[Open the FinTrack User Guide](docs/index.html)** — complete step-by-step instructions for using the system.
+
 ## Overview
 
 FinTrack provides modules for:
@@ -131,6 +133,8 @@ FinTrack-System/
 ├── index.html
 ├── README.md
 ├── docs/
+│   ├── index.html
+│   ├── USER_GUIDE.html
 │   └── USER_GUIDE.md
 └── assets/
     ├── css/
@@ -167,4 +171,14 @@ For a more professional production-ready version:
 
 ## Documentation
 
-See **[docs/USER_GUIDE.md](docs/USER_GUIDE.md)** for the complete step-by-step user guidelines.
+### User Guide
+
+For the easiest reading experience, open the **[FinTrack Web User Guide](docs/index.html)**. It is a responsive, print-friendly documentation page that works when the project is deployed as a website.
+
+You can also view the **[Markdown User Guide](docs/USER_GUIDE.md)** directly in GitHub. If GitHub's Markdown viewer temporarily shows an “Error loading page” message, use the Web User Guide instead.
+
+### Documentation files
+
+- **[Web User Guide](docs/index.html)** — recommended for end users
+- **[Markdown User Guide](docs/USER_GUIDE.md)** — recommended for GitHub/developer documentation
+- **[HTML User Guide](docs/USER_GUIDE.html)** — standalone copy of the web guide
