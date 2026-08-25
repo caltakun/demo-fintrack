@@ -109,7 +109,15 @@ function loadUserState(username){
 }
 function updateStoredUserProfile(name){const u=activeEmail();const users=getUsers();const idx=users.findIndex(x=>normalizeEmail(x.email)===normalizeEmail(u));if(idx>=0){users[idx].displayName=name;saveUsers(users)}}
 loadUserState(activeEmail());
-function sum(arr,key="amount"){return arr.reduce((a,x)=>a+Number(x[key]||0),0)}
+function sum(arr,key="amount"){
+ const values=Array.isArray(arr)?arr:[];
+ return values.reduce((a,x)=>{
+   // Cash-flow summaries pass numeric series, while financial records are objects.
+   // Support both so summary cards always match the chart data.
+   const value=(typeof x==="number"||typeof x==="string")?x:x?.[key];
+   return a+Number(value||0);
+ },0)
+}
 function render(){
  const inc=sum(data.income),exp=sum(data.expense),sav=sum(data.goals,"current"),inv=sum(data.investments,"value"),prot=sum(data.protection),acct=sum(data.accounts||[],"balance"),debt=sum(data.debts||[],"balance");
  totalIncome.textContent=money(inc);totalExpense.textContent=money(exp);totalSavings.textContent=money(sav);totalInvestments.textContent=money(inv);totalProtection.textContent=money(prot);netPosition.textContent=money(inc-exp);
@@ -200,10 +208,15 @@ function renderDebts(){const el=document.getElementById("debtsTable");if(!el)ret
 function renderRecurring(){const el=document.getElementById("recurringTable");if(!el)return;const rows=(data.recurring||[]).map(x=>`<tr><td><b>${escapeHtml(x.desc)}</b></td><td><span class="tag">${escapeHtml(x.type)}</span></td><td>${money(x.amount)}</td><td>${escapeHtml(x.frequency)}</td><td>${escapeHtml(x.nextDate)}</td><td><span class="status">${x.active===false?"Paused":"Active"}</span></td><td>${rowActions(x.id,"recurring")}</td></tr>`).join("");el.innerHTML=rows||`<tr><td colspan="7" class="empty">No recurring transactions yet.</td></tr>`;}
 function renderAudit(){const logs=data.audit||[];["auditLogList","dashboardAuditLogList"].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.innerHTML=logs.length?logs.slice(0,30).map(x=>`<div class="audit-row"><span>${new Date(x.at).toLocaleString()}</span><b>${escapeHtml(x.action)}</b><small>${escapeHtml(x.details)}</small></div>`).join(""):"<div class='empty'>No activity recorded yet.</div>";});}
 function renderAdminMetrics(){
- const users=getUsers();
- const records=users.reduce((total,u)=>{const d=getUserData(u.email);return total+(d.income||[]).length+(d.expense||[]).length;},0);
- const admins=users.filter(x=>x.role==="admin"||normalizeEmail(x.email)===AUTH_EMAIL).length;
- ["adminUsersMetric","dashboardAdminUsersMetric"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=users.length;});
+ const allUsers=getUsers();
+ // Admin is a system account, not a client. Never include it in client/user or transaction statistics.
+ const regularUsers=allUsers.filter(u=>u.role!=="admin"&&normalizeEmail(u.email)!==AUTH_EMAIL);
+ const records=regularUsers.reduce((total,u)=>{
+   const d=getUserData(u.email);
+   return total+(Array.isArray(d.income)?d.income.length:0)+(Array.isArray(d.expense)?d.expense.length:0);
+ },0);
+ const admins=allUsers.filter(x=>x.role==="admin"||normalizeEmail(x.email)===AUTH_EMAIL).length;
+ ["adminUsersMetric","dashboardAdminUsersMetric"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=regularUsers.length;});
  ["adminRecordsMetric","dashboardAdminRecordsMetric"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=records;});
  ["adminActiveMetric","dashboardAdminActiveMetric"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=admins;});
 }
@@ -299,31 +312,78 @@ function renderAnalytics(){
        {label:"Income",data:inc,borderWidth:0,borderRadius:5},
        {label:"Spending",data:exp,borderWidth:0,borderRadius:5},
        {label:"Net",data:netVals,type:"line",borderWidth:2,tension:.3,pointRadius:3}
-     ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>money(v)}},x:{grid:{display:false}}}}});
+     ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},layout:{padding:{top:4,right:4,bottom:0,left:0}},plugins:{legend:{position:"bottom",labels:{font:{size:9},boxWidth:18,boxHeight:8,padding:12,usePointStyle:false}},tooltip:{padding:10,callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}},scales:{y:{beginAtZero:true,ticks:{maxTicksLimit:6,callback:v=>money(v)}},x:{grid:{display:false},ticks:{autoSkip:true,maxTicksLimit:10,maxRotation:0}}}}});
    }
  }
 }
 
 function monthKey(date){const d=new Date(`${date}T00:00:00`);return Number.isNaN(d.getTime())?null:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
 function monthLabel(key){const [y,m]=key.split("-").map(Number);return new Intl.DateTimeFormat("en-US",{month:"short"}).format(new Date(y,m-1,1))}
-function getCashFlowMonths(limit){const dates=[...data.income,...data.expense].map(x=>monthKey(x.date)).filter(Boolean).sort();if(!dates.length)return [];return [...new Set(dates)].slice(-limit)}
+function dateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function startOfWeek(d){const x=new Date(d);x.setHours(0,0,0,0);const day=x.getDay();const diff=day===0?-6:1-day;x.setDate(x.getDate()+diff);return x}
+function periodDateKeys(start,end){const keys=[];const d=new Date(start);d.setHours(0,0,0,0);const last=new Date(end);last.setHours(0,0,0,0);while(d<=last){keys.push(dateKey(d));d.setDate(d.getDate()+1)}return keys}
+function getCashFlowPeriods(range){
+ const now=new Date();now.setHours(0,0,0,0);
+ if(range==="This week"){const start=startOfWeek(now);return {type:"day",keys:periodDateKeys(start,now),labels:periodDateKeys(start,now).map(k=>{const d=new Date(`${k}T00:00:00`);return new Intl.DateTimeFormat("en-US",{weekday:"short"}).format(d)}),title:"This week"};}
+ if(range==="This month"){const start=new Date(now.getFullYear(),now.getMonth(),1);const keys=periodDateKeys(start,now);return {type:"day",keys,labels:keys.map(k=>{const d=new Date(`${k}T00:00:00`);return String(d.getDate())}),title:new Intl.DateTimeFormat("en-US",{month:"long",year:"numeric"}).format(now)};}
+ if(range==="Last 4 weeks"){const currentWeek=startOfWeek(now);const starts=[];for(let i=3;i>=0;i--){const d=new Date(currentWeek);d.setDate(d.getDate()-i*7);starts.push(d)}return {type:"week",keys:starts.map(dateKey),labels:starts.map((d,i)=>`W${i+1}`),starts,title:"Last 4 weeks"};}
+ const limit=range.includes("12")?12:6;const months=[];const base=new Date(now.getFullYear(),now.getMonth(),1);for(let i=limit-1;i>=0;i--){months.push(new Date(base.getFullYear(),base.getMonth()-i,1))}return {type:"month",keys:months.map(d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`),labels:months.map(d=>new Intl.DateTimeFormat("en-US",{month:"short"}).format(d)),title:range};
+}
+function getCashFlowAmounts(period){
+ const amountFor=(arr,key)=>sum(arr.filter(x=>{const d=String(x.date||"");if(period.type==="day")return period.keys.includes(d);if(period.type==="week"){const dt=new Date(`${d}T00:00:00`);const current=period.starts.findIndex(st=>{const end=new Date(st);end.setDate(end.getDate()+6);return dt>=st&&dt<=end});return current>=0;}return monthKey(d)===key}),"amount");
+ if(period.type==="day")return {income:period.keys.map(k=>amountFor(data.income,k)),expense:period.keys.map(k=>amountFor(data.expense,k))};
+ if(period.type==="week")return {income:period.starts.map(st=>{const end=new Date(st);end.setDate(end.getDate()+6);return sum(data.income.filter(x=>{const d=new Date(`${x.date}T00:00:00`);return d>=st&&d<=end}),"amount")}),expense:period.starts.map(st=>{const end=new Date(st);end.setDate(end.getDate()+6);return sum(data.expense.filter(x=>{const d=new Date(`${x.date}T00:00:00`);return d>=st&&d<=end}),"amount")})};
+ return {income:period.keys.map(k=>sum(data.income.filter(x=>monthKey(x.date)===k),"amount")),expense:period.keys.map(k=>sum(data.expense.filter(x=>monthKey(x.date)===k),"amount"))};
+}
 function showChartEmpty(canvas,message,detail){const panel=canvas.closest(".chart-panel");if(!panel)return;canvas.style.display="none";let empty=panel.querySelector(`.chart-empty[data-for="${canvas.id}"]`);if(!empty){empty=document.createElement("div");empty.className="chart-empty";empty.dataset.for=canvas.id;canvas.parentNode.insertBefore(empty,canvas.nextSibling)}empty.innerHTML=`<div class="chart-empty-icon">${canvas.id==="cashFlowChart"?"↗":"◌"}</div><b>${message}</b><span>${detail}</span>`;empty.classList.remove("hidden")}
 function hideChartEmpty(canvas){const panel=canvas.closest(".chart-panel");if(!panel)return;canvas.style.display="block";panel.querySelector(`.chart-empty[data-for="${canvas.id}"]`)?.classList.add("hidden")}
+function updateCashFlowSummary(income,expense,title){
+ const inc=sum(income),exp=sum(expense),net=inc-exp,rate=inc>0?(net/inc)*100:0;
+ const i=document.getElementById("cashFlowIncomeSummary"),e=document.getElementById("cashFlowExpenseSummary"),n=document.getElementById("cashFlowNetSummary"),r=document.getElementById("cashFlowRateSummary");
+ if(i)i.textContent=money(inc);
+ if(e)e.textContent=money(exp);
+ if(n){n.textContent=money(net);n.classList.toggle("positive",net>0);n.classList.toggle("negative",net<0)}
+ if(r)r.textContent=inc>0?`${rate.toFixed(1)}%`:exp>0?"N/A":"—";
+ const panel=document.querySelector(".cash-flow-panel");
+ if(panel)panel.dataset.period=title||"";
+ const label=document.getElementById("cashFlowPeriodLabel");
+ if(label)label.textContent=title?`Selected period: ${title}`:"";
+ const incomeCount=document.getElementById("cashFlowIncomeCount"),expenseCount=document.getElementById("cashFlowExpenseCount");
+ if(incomeCount)incomeCount.textContent=`${income.filter(v=>Number(v)>0).length} active period${income.filter(v=>Number(v)>0).length===1?"":"s"}`;
+ if(expenseCount)expenseCount.textContent=`${expense.filter(v=>Number(v)>0).length} active period${expense.filter(v=>Number(v)>0).length===1?"":"s"}`;
+}
+function filterExpensesForCashPeriod(period){
+ if(period.type==="day")return data.expense.filter(x=>period.keys.includes(String(x.date||"")));
+ if(period.type==="week"){
+  return data.expense.filter(x=>{
+   const dt=new Date(`${String(x.date||"")}T00:00:00`);
+   if(Number.isNaN(dt.getTime()))return false;
+   return period.starts.some(st=>{const end=new Date(st);end.setDate(end.getDate()+6);return dt>=st&&dt<=end});
+  });
+ }
+ return data.expense.filter(x=>period.keys.includes(monthKey(x.date)));
+}
 function updateCharts(){
  const cashCanvas=document.getElementById("cashFlowChart");
- const limit=(document.getElementById("chartRange")?.value||"Last 6 months").includes("12")?12:6;
- const months=getCashFlowMonths(limit);
+ const range=document.getElementById("chartRange")?.value||"This month";
+ const period=getCashFlowPeriods(range);
+ const amounts=getCashFlowAmounts(period);
+ updateCashFlowSummary(amounts.income,amounts.expense,period.title);
  if(cashChart){cashChart.destroy();cashChart=null}
- if(!months.length){showChartEmpty(cashCanvas,"No financial activity yet","Add your first income or expense to start building your cash-flow history.")}
+ const hasActivity=amounts.income.some(v=>v>0)||amounts.expense.some(v=>v>0);
+ if(!hasActivity){showChartEmpty(cashCanvas,"No financial activity for this period","Add income or spending records to build your cash-flow report.")}
  else{
   hideChartEmpty(cashCanvas);
-  const inc=months.map(key=>sum(data.income.filter(x=>monthKey(x.date)===key)));const exp=months.map(key=>sum(data.expense.filter(x=>monthKey(x.date)===key)));
-  cashChart=new Chart(cashCanvas,{type:"line",data:{labels:months.map(monthLabel),datasets:[{label:"Income",data:inc,borderWidth:2,tension:.35,pointRadius:3},{label:"Spending",data:exp,borderWidth:2,tension:.35,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{font:{size:10}}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>money(v)}},x:{grid:{display:false}}}}});
+  const netVals=amounts.income.map((v,i)=>v-amounts.expense[i]);
+  cashChart=new Chart(cashCanvas,{type:"bar",data:{labels:period.labels,datasets:[{label:"Income",data:amounts.income,borderWidth:0,borderRadius:5},{label:"Spending",data:amounts.expense,borderWidth:0,borderRadius:5},{label:"Net",data:netVals,type:"line",borderWidth:2,tension:.3,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{position:"bottom",labels:{font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${money(c.raw)}`}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>money(v)}},x:{grid:{display:false}}}}});
  }
- const cats={};data.expense.forEach(x=>cats[x.cat]=(cats[x.cat]||0)+Number(x.amount));let labels=Object.keys(cats);let vals=Object.values(cats);const expenseCanvas=document.getElementById("expenseChart");
+ const expenseRecords=filterExpensesForCashPeriod(period);
+ const cats={};expenseRecords.forEach(x=>cats[x.cat]=(cats[x.cat]||0)+Number(x.amount));let labels=Object.keys(cats);let vals=Object.values(cats);const expenseCanvas=document.getElementById("expenseChart");
+ const spendingSubtitle=document.getElementById("spendingBreakdownSubtitle");
+ if(spendingSubtitle)spendingSubtitle.textContent=`Where your money goes · ${period.title}`;
  if(expenseChart){expenseChart.destroy();expenseChart=null}
- if(!vals.length){showChartEmpty(expenseCanvas,"No spending recorded yet","Add an expense to see where your money is going.");document.getElementById("donutTotal").textContent=money(0);legend.innerHTML=""}
- else{hideChartEmpty(expenseCanvas);expenseChart=new Chart(expenseCanvas,{type:"doughnut",data:{labels,datasets:[{data:vals,borderWidth:0}]},options:{cutout:"73%",plugins:{legend:{display:false}}}});document.getElementById("donutTotal").textContent=money(sum(data.expense));const colors=["#635bff","#18a86b","#e5a12e","#ed5c61","#4285e8","#9a6be8"];legend.innerHTML=labels.map((l,i)=>`<span style="--c:${colors[i%colors.length]}">${escapeHtml(l)} ${money(cats[l])}</span>`).join("")}
+ if(!vals.length){showChartEmpty(expenseCanvas,"No spending recorded yet","Add an expense in this selected period to see your breakdown.");document.getElementById("donutTotal").textContent=money(0);legend.innerHTML=""}
+ else{hideChartEmpty(expenseCanvas);expenseChart=new Chart(expenseCanvas,{type:"doughnut",data:{labels,datasets:[{data:vals,borderWidth:0}]},options:{cutout:"73%",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}}}});document.getElementById("donutTotal").textContent=money(sum(expenseRecords,"amount"));const colors=["#635bff","#18a86b","#e5a12e","#ed5c61","#4285e8","#9a6be8"];legend.innerHTML=labels.map((l,i)=>`<span style="--c:${colors[i%colors.length]}">${escapeHtml(l)} ${money(cats[l])}</span>`).join("")}
 }
 function openModal(type="income"){formType.value=type;modalTitle.textContent=type==="income"?"Add Income":"Add Expense";fCategory.innerHTML=(type==="income"?["Salary","Freelance","Business","Bonus","Other"]:["Food","Bills","Transport","Shopping","Entertainment","Health","Other"]).map(x=>`<option>${x}</option>`).join("");fDate.value=today;fDesc.value="";fAmount.value="";fNotes.value="";modal.classList.remove("hidden")}
 function updateDashboardMode(){const admin=isAdmin();document.body.classList.toggle("admin-mode",admin);const regular=document.getElementById("regularDashboardView"),view=document.getElementById("adminDashboardView"),quick=document.getElementById("quickAdd");if(regular)regular.classList.toggle("hidden",admin);if(view)view.classList.toggle("hidden",!admin);if(quick)quick.classList.toggle("hidden",admin);const profileType=document.querySelector("#profileName + small");if(profileType)profileType.textContent=admin?"Administrator":"Personal Account";}
