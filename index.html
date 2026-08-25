@@ -84,8 +84,8 @@
         </div>
 
         <div class="grid-two">
-          <div class="panel chart-panel"><div class="panel-head"><div><h3>Cash Flow</h3><span>Income vs. spending</span></div><select id="chartRange"><option>Last 6 months</option><option>Last 12 months</option></select></div><canvas id="cashFlowChart"></canvas></div>
-          <div class="panel chart-panel"><div class="panel-head"><div><h3>Spending Breakdown</h3><span>Where your money goes</span></div></div><div class="donut-wrap"><canvas id="expenseChart"></canvas><div class="donut-center"><b id="donutTotal">₱0</b><small>spent</small></div></div><div class="legend" id="legend"></div></div>
+          <div class="panel chart-panel cash-flow-panel"><div class="panel-head"><div><h3>Cash Flow Report</h3><span>Income, spending and net cash flow by period</span></div><select id="chartRange" aria-label="Cash flow period"><option>This week</option><option>Last 4 weeks</option><option>This month</option><option>Last 6 months</option><option>Last 12 months</option></select></div><div class="cash-flow-period-label" id="cashFlowPeriodLabel">Selected period: This month</div><div class="cash-flow-summary"><div><span>Income</span><b id="cashFlowIncomeSummary">₱0</b><small id="cashFlowIncomeCount">0 active periods</small></div><div><span>Spending</span><b id="cashFlowExpenseSummary">₱0</b><small id="cashFlowExpenseCount">0 active periods</small></div><div><span>Net cash flow</span><b id="cashFlowNetSummary">₱0</b><small>Income − Spending</small></div><div><span>Savings rate</span><b id="cashFlowRateSummary">—</b><small>Net ÷ Income</small></div></div><div class="cash-flow-chart-wrap"><canvas id="cashFlowChart"></canvas></div></div>
+          <div class="panel chart-panel"><div class="panel-head"><div><h3>Spending Breakdown</h3><span id="spendingBreakdownSubtitle">Where your money goes</span></div></div><div class="donut-wrap"><canvas id="expenseChart"></canvas><div class="donut-center"><b id="donutTotal">₱0</b><small>spent</small></div></div><div class="legend" id="legend"></div></div>
         </div>
 
         <div class="grid-two bottom-grid">
@@ -158,6 +158,6 @@
 
 <div class="modal hidden" id="goalModal"><div class="modal-box goal-modal-box"><button class="close" id="closeGoalModal">×</button><div class="modal-kicker" id="goalModalKicker">SAVINGS GOAL</div><h2 id="goalModalTitle">Add Savings</h2><p class="modal-help" id="goalModalHelp">Add money to increase this goal's progress.</p><div class="goal-modal-summary"><div><span>Current</span><b id="goalModalCurrent">₱0.00</b></div><div><span>Target</span><b id="goalModalTarget">₱0.00</b></div><div><span>Remaining</span><b id="goalModalRemaining">₱0.00</b></div></div><form id="goalForm"><input type="hidden" id="goalAction"><input type="hidden" id="goalId"><label>Amount<input id="goalAmount" type="number" min="0.01" step="0.01" required placeholder="0.00"></label><div class="goal-preview" id="goalPreview">New balance: ₱0.00</div><button class="primary full" id="goalSubmit" type="submit">Add Savings</button></form></div></div>
 
-<script src="assets/js/app.js"></script>
+<script src="assets/js/app.js?v=20260825-1200"></script>
 </body>
 </html>
