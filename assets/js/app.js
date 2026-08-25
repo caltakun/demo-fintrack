@@ -398,7 +398,7 @@ function showPage(id){
  document.querySelectorAll(".nav-link").forEach(a=>a.classList.toggle("active",a.dataset.page===id));
  pageTitle.textContent=id[0].toUpperCase()+id.slice(1);
  updateDashboardMode();
- if(innerWidth<761)sidebar.classList.remove("open")
+ if(innerWidth<=700)setSidebarOpen(false)
 }
 document.querySelectorAll(".nav-link,[data-page]").forEach(a=>a.addEventListener("click",()=>showPage(a.dataset.page)));
 quickAdd.onclick=()=>openModal("expense");closeModal.onclick=()=>modal.classList.add("hidden");modal.onclick=e=>{if(e.target===modal)modal.classList.add("hidden")};
@@ -517,7 +517,13 @@ protectionForm.onsubmit=e=>{
  save();render();protectionModal.classList.add("hidden");
 };
 document.getElementById("addAccount")?.addEventListener("click",promptAccount);document.getElementById("addDebt")?.addEventListener("click",promptDebt);document.getElementById("addRecurring")?.addEventListener("click",promptRecurring);
-menuBtn.onclick=()=>sidebar.classList.toggle("open");themeBtn.onclick=()=>{document.body.classList.toggle("dark");localStorage.setItem("fintrackDark",document.body.classList.contains("dark"))};if(localStorage.getItem("fintrackDark")==="true")document.body.classList.add("dark");
+const mobileSidebarOverlay=document.getElementById("mobileSidebarOverlay");
+function setSidebarOpen(open){sidebar.classList.toggle("open",open);document.body.classList.toggle("sidebar-open",open);if(mobileSidebarOverlay)mobileSidebarOverlay.setAttribute("aria-hidden",open?"false":"true");if(menuBtn)menuBtn.setAttribute("aria-expanded",open?"true":"false");}
+menuBtn.onclick=()=>setSidebarOpen(!sidebar.classList.contains("open"));
+mobileSidebarOverlay?.addEventListener("click",()=>setSidebarOpen(false));
+window.addEventListener("resize",()=>{if(innerWidth>700)setSidebarOpen(false)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&sidebar.classList.contains("open"))setSidebarOpen(false)});
+themeBtn.onclick=()=>{document.body.classList.toggle("dark");localStorage.setItem("fintrackDark",document.body.classList.contains("dark"))};if(localStorage.getItem("fintrackDark")==="true")document.body.classList.add("dark");
 function renderAdminAccounts(){
  const targets=[{list:"dashboardAdminAccountList",count:"dashboardAdminAccountCount",message:"dashboardAdminMessage"},{list:"adminAccountList",count:"adminAccountCount",message:"adminMessage"}];
  if(!isAdmin())return;
