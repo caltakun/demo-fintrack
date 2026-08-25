@@ -47,7 +47,7 @@
 </div>
 <div class="app auth-locked">
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><div class="brand-mark">₱</div><div><strong>FinTrack</strong><span>Financial Tracker</span></div></div>
+    <div class="brand"><div class="brand-mark">₱</div><div><strong>FinTrack</strong><span>Financial Tracker</span></div><button class="sidebar-close" id="sidebarCloseBtn" type="button" aria-label="Close menu">×</button></div>
     <nav>
       <a class="nav-link active" data-page="dashboard">⌂ <span>Dashboard</span></a>
       <a class="nav-link" data-page="income">↗ <span>Income</span></a>
@@ -60,6 +60,9 @@
     <div class="sidebar-bottom">
       <a class="nav-link" data-page="settings">⚙ <span>Settings</span></a>
       <div class="profile"><div class="avatar" id="profileAvatar">CU</div><div><b id="profileName">Carl Justine</b><small>Personal Account</small></div></div>
+      <button class="sidebar-logout" id="sidebarLogoutBtn" type="button">
+        <span aria-hidden="true">↪</span><span>Log out</span>
+      </button>
     </div>
   </aside>
   <div class="mobile-sidebar-overlay" id="mobileSidebarOverlay" aria-hidden="true"></div>

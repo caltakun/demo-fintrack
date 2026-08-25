@@ -29,3 +29,12 @@ The Spending Breakdown now uses the same selected period as the Cash Flow Report
 
 ## Run
 Open `index.html` in a modern browser. Chart.js is loaded from jsDelivr, so charts require internet access unless Chart.js is bundled locally.
+
+
+## Mobile navigation fix
+- Added a dedicated **Log out** button inside the mobile sidebar.
+- The top-right logout icon is hidden on small screens to avoid crowding; logout is always available from the menu.
+- Added a close (×) button inside the mobile drawer.
+- Added safe-area spacing and larger touch targets for mobile logout/menu controls.
+- Logout now uses one shared handler, clears the active session, closes the drawer, and returns to the login form.
+- Preserved the existing desktop logout button and authentication behavior.
