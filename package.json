@@ -1,0 +1,8 @@
+{
+  "name": "fintrack-database-upgrade",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vercel-compatible PostgreSQL backend for FinTrack",
+  "engines": { "node": ">=20" },
+  "dependencies": { "pg": "^8.16.3" }
+}
